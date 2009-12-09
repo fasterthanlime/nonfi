@@ -1,0 +1,10 @@
+nonfi
+=====
+
+nonfi is a small GTK+ network manager without the hassle.
+
+frankly,, NetworkManager never works and is too slow, and wicd's UI sucks balls.
+
+is it possible to do better? time will tell.
+
+also, it's a good showcase of ooc-gtk usage
