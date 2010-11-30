@@ -1,5 +1,4 @@
 
-
 Network: class {
     
     essid   := ""
@@ -18,10 +17,6 @@ Network: class {
         "\n%s %s" format(encrypt, cipher) +
         "\nchannel %d" format(channel) +
         "\nbssid\t %s" format(bssid)
-    }
-    
-    connect: func {
-        "Should connect to network %s with auth %s" printfln(essid, encrypt)
     }
     
 }

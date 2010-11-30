@@ -1,5 +1,6 @@
 use gtk
 
+import EnterPassphrase
 import gtk/[Gtk, StatusIcon, Menu, Label]
 import structs/[List, ArrayList]
 import net/Network
@@ -44,7 +45,7 @@ NonfiTray: class {
                     network essid,
                     "</span>"))
             item setToolTipText(network toString())
-            item connect("activate", || network connect())
+            item connect("activate", || EnterPassphrase new(network))
             item show()
             menu append(item)
             i += 1
@@ -63,7 +64,7 @@ NonfiTray: class {
                 )
             )
             item setToolTipText(network toString())
-            item connect("activate", || network connect())
+            item connect("activate", || EnterPassphrase new(network))
             item show()
             menu append(item)
         )
