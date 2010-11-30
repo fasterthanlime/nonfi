@@ -11,10 +11,21 @@ NetworkFinder: class {
         
         networks := ArrayList<Network> new()
         
+        current_bssid := ""
+        
+        wpastatus := Process new(["wpa_cli", "status"]) getOutput()
+        wpastatus split('\n') each(|line|
+            if(line startsWith?("bssid=")) {
+                current_bssid = line substring("bssid=" size) trim() toUpper()
+                "current bssid == %s" printfln(current_bssid)
+            }
+        )
+        
         output := Process new(["iwlist", "wlan0", "scanning"]) getOutput()
         
         firstCell := true
         output split("Cell ") each(|cell|
+            current_bssid
             if(firstCell) {
                 firstCell = false
                 return true
@@ -27,8 +38,10 @@ NetworkFinder: class {
                 if(first) {
                     first = false
                     idx := line indexOf("Address: ")
-                    network bssid = line substring(idx + "Address: " size)
-                    
+                    network bssid = line substring(idx + "Address: " size) trim() toUpper()
+                    if(network bssid == current_bssid) {
+                        network connected = true
+                    }
                 } else {
                     line = line trim()
                     if(line startsWith?("ESSID:")) {

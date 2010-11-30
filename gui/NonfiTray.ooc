@@ -22,30 +22,29 @@ NonfiTray: class {
         rootMenu setSubMenu(menu)
         rootMenu show()
         
-        
         knownNetworks   := ArrayList<Network> new()
         unknownNetworks := ArrayList<Network> new()
         networks each(|network|
             known := (Random randInt(1, 2) == 1)
-            if(known) {
+            if(known || network connected) {
                 knownNetworks add(network)
             } else {
                 unknownNetworks add(network)
             }
         )
         
-        connected := Random randRange(0, knownNetworks size)
-        
         i := 0
         knownNetworks each(|network|
             item := MenuItem new("blah")
             item getChild() as Label setMarkup(
-                "%s%d %%\t%s%s%s" format(
-                    connected == i ? "⇒\t" : "\t",
+                "%s<small>%d %%</small>\t%s%s%s" format(
+                    network connected ? "⇒\t" : "\t",
                     (network quality * 100.0) as Int,
-                    (connected == i ? "<span weight=\"bold\">" : "<span>"),
+                    network connected ? "<span weight=\"bold\">" : "<span>",
                     network essid,
                     "</span>"))
+            item setToolTipText(network toString())
+            item connect("activate", || network connect())
             item show()
             menu append(item)
             i += 1
@@ -58,11 +57,13 @@ NonfiTray: class {
         unknownNetworks each(|network|
             item := MenuItem new("blah")
             item getChild() as Label setMarkup(
-                "\t%d %%\t%s%s%s" format(
+                "\t<small>%d %%</small>\t%s" format(
                     (network quality * 100.0) as Int,
-                    (connected == i ? "<span weight=\"bold\">" : "<span>"),
-                    network essid,
-                    "</span>"))
+                    network essid
+                )
+            )
+            item setToolTipText(network toString())
+            item connect("activate", || network connect())
             item show()
             menu append(item)
         )

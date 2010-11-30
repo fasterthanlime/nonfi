@@ -7,10 +7,7 @@ main: func {
     
     networks each(|network|
         println()
-        " - %s (%.1f %%)" printfln(network essid, network quality * 100.0)
-        "     %s %s" printfln(network encrypt, network cipher)
-        "     channel %d" printfln(network channel)
-        "     bssid: %s" printfln(network bssid)
+        network toString() println()
     )
 
     NonfiTray new(networks)
