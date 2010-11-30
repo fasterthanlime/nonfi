@@ -1,10 +1,18 @@
 nonfi
 =====
 
-nonfi is a small GTK+ network manager without the hassle.
+Let's summarize:
 
-frankly,, NetworkManager never works and is too slow, and wicd's UI sucks balls.
+  - NetworkManager devs have been at it for years, and it still sucks:
+     * random disconnects on non-trivial networks (WPA2+radius)
+     * takes ages to connect
+     * sucky configuration UI in recent versions
+     * sometimes it's hard to figure out what it's doing, which network it's connecting to, etc.
 
-is it possible to do better? time will tell.
+  - wicd is supposed to be an alternative, but...
+     * the UI really, really sucks
+     * for WPA2+radius, you have to *paste* the certificate path by hand! there's no browse dialog..
+     * sucky handling of networks with the same ESSID (checkbox, unclear, still display duplicates)
+     * unclear strategy for choosing the network to connect to
 
-also, it's a good showcase of ooc-gtk usage
+So here's my try. It's a good showcase for ooc-gtk :)
