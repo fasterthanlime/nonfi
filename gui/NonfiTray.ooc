@@ -1,6 +1,9 @@
 use gtk
 
-import gtk/[Gtk, StatusIcon, Menu]
+import gtk/[Gtk, StatusIcon, Menu, Label]
+import structs/[List, ArrayList]
+import net/Network
+import math/Random
 
 NonfiTray: class {
     
@@ -9,21 +12,64 @@ NonfiTray: class {
     menu: Menu
     menubar: MenuBar
     
-    init: func {
+    init: func (networks: List<Network>) {
         icon = StatusIcon new("resources/nonfi.png")
-        icon connectNaked("activate",   this, activate)
-        icon connectNaked("popup-menu", this, activate)
+        icon connectNaked("activate", this, activate)
+        //icon connectNaked("popup-menu", this, activate)
         
         menu = Menu new()
         rootMenu := MenuItem new("Root Menu")
         rootMenu setSubMenu(menu)
         rootMenu show()
         
-        for(i in 1..6) {
-            network := MenuItem new("network %d" format(i))
-            network show()
-            menu append(network)
-        }
+        
+        knownNetworks   := ArrayList<Network> new()
+        unknownNetworks := ArrayList<Network> new()
+        networks each(|network|
+            known := (Random randInt(1, 2) == 1)
+            if(known) {
+                knownNetworks add(network)
+            } else {
+                unknownNetworks add(network)
+            }
+        )
+        
+        connected := Random randRange(0, knownNetworks size)
+        
+        i := 0
+        knownNetworks each(|network|
+            item := MenuItem new("blah")
+            item getChild() as Label setMarkup(
+                "%s%d %%\t%s%s%s" format(
+                    connected == i ? "⇒\t" : "\t",
+                    (network quality * 100.0) as Int,
+                    (connected == i ? "<span weight=\"bold\">" : "<span>"),
+                    network essid,
+                    "</span>"))
+            item show()
+            menu append(item)
+            i += 1
+        )
+        
+        separator := MenuItem new()
+        separator show()
+        menu append(separator)
+        
+        unknownNetworks each(|network|
+            item := MenuItem new("blah")
+            item getChild() as Label setMarkup(
+                "\t%d %%\t%s%s%s" format(
+                    (network quality * 100.0) as Int,
+                    (connected == i ? "<span weight=\"bold\">" : "<span>"),
+                    network essid,
+                    "</span>"))
+            item show()
+            menu append(item)
+        )
+        
+        separator = MenuItem new()
+        separator show()
+        menu append(separator)
         
         quit := MenuItem new("Quit")
         quit connect("activate", || exit(0))
@@ -38,8 +84,8 @@ NonfiTray: class {
     }
     
     activate: func {
-        "Popping up!" println()
-        menu popup(null, null, null, null, 3 /* button */, 0 /* activate_time */)
+        menu popup(null, null, gtk_status_icon_position_menu /* position func */,
+            icon /* userData */, 3 /* button */, gtk_get_current_event_time() /* activate_time */)
     }
     
 }
